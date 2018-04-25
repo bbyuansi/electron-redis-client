@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Redis Client</title>
+    <link rel="stylesheet" href="./assets/css/public.css">
+    <link rel="stylesheet" href="./assets/css/index.css">
+    <script>
+        let {getAllServers, connectRedis, getDefaultServer, getAllKeys} = require('./config/server');
+        let {renderHtml} = require('./utils/common');
+        let option = getDefaultServer();
+        let client = connectRedis(option);</script>
+</head>
+<body>
+<div class="root">
+    <div class="header">
+        <ul>
+            <script>
+                getAllServers().map((v, k) => {
+                    renderHtml('<li class="server-item" data-servers-key="' + k + '">' + v.name + '</li>');
+                });
+            </script>
+        </ul>
+    </div>
+    <div class="main">
+        <div class="nav-left">
+            <div class="db-item hide">
+                <select class="db-select form-control" name="db-select">
+                    <script>
+                        for (let i = 0; i <= 15; i++) {
+                            renderHtml('<option value="' + i + '" class="database-item" ' + (i === 0 ? 'checked' : '') + '>db ' + i + '</option>')
+                        }
+                    </script>
+                </select>
+            </div>
+            <div class="keys-item">
+            </div>
+        </div>
+        <div class="container">
+            <div class="content"></div>
+        </div>
+    </div>
+</div>
+<script>
+
+    window.$ = window.jQuery = require('jquery');
+
+    $(function () {
+
+        if (getAllServers().length > 0) {
+            $('.server-item').on('click', function () {
+                $('.db-item').removeClass('hide');
+                $(this).addClass('active').siblings().removeClass('active');
+                client.quit();
+                const key = $(this).data('servers-key');
+                const server = getAllServers()[key];
+                client = connectRedis(server);
+                $('.db-select').on('change', function () {
+                    $('.keys-item').empty();
+                    let keys = getAllKeys(client, $(this).val(), appendKeysAndCount);
+                    console.log(keys);
+                });
+            });
+        }
+
+    });
+
+    function appendKeysAndCount(keys) {
+        $('.keys-item').append('<div><span class="glyphicon glyphicon-minus"></span>keys' + keys.length + '</div>');
+        keys.map((v, k) => {
+            $('.keys-item').append('<div>' + v + '</div>');
+        })
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+{
+    "name": "first",
+    "version": "0.0.1",
+    "description": "Redis client",
+    "main": "src/main.js",
+    "author": "biyuansi",
+    "license": "MIT",
+    "scripts": {
+        "start": "electron .",
+        "package": "electron-packager . first --win --out ./RedisClient --arch x64 --version 0.0.1 --electron-version 1.8.4"
+    },
+    "dependencies": {
+        "electron-packager": "^12.0.1",
+        "jquery": "^3.3.1",
+        "redis": "^2.8.0",
+        "yarn": "^1.6.0"
+    },
+    "devDependencies": {
+        "electron": "^1.8.4"
+    }
+}
